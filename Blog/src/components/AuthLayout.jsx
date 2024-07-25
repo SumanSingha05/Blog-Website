@@ -1,0 +1,1 @@
+// It is a mechanism to protect routes or pages
