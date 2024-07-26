@@ -1,15 +1,15 @@
-import conf from '../conf.js'
-import { Client , Account , ID, Databases, Storage, Query} from "appwrite"
+import conf from '../conf/conf.js';
+import { Client, ID, Databases, Storage, Query } from "appwrite";
 
 export class Service{
     client = new Client();
     databases;
     bucket;
-
-    constructor() {
+    
+    constructor(){
         this.client
         .setEndpoint(conf.appwriteUrl)
-        .setProject(conf.appwriteProjectId)
+        .setProject(conf.appwriteProjectId);
         this.databases = new Databases(this.client);
         this.bucket = new Storage(this.client);
     }
@@ -29,12 +29,11 @@ export class Service{
                 }
             )
         } catch (error) {
-            console.log("Appwrite serive :: createpost :: error", error);
-            
+            console.log("Appwrite serive :: createPost :: error", error);
         }
     }
 
-    async updatePost(slug, {title, content, featuredImage, status,}){
+    async updatePost(slug, {title, content, featuredImage, status}){
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
@@ -45,6 +44,7 @@ export class Service{
                     content,
                     featuredImage,
                     status,
+
                 }
             )
         } catch (error) {
@@ -55,13 +55,14 @@ export class Service{
     async deletePost(slug){
         try {
             await this.databases.deleteDocument(
-                conf.appwriteCollectionId,
                 conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
                 slug
+            
             )
-            return true;
+            return true
         } catch (error) {
-            console.log("Appwrite serive :: updatePost :: error", error);
+            console.log("Appwrite serive :: deletePost :: error", error);
             return false
         }
     }
@@ -69,29 +70,33 @@ export class Service{
     async getPost(slug){
         try {
             return await this.databases.getDocument(
-                conf.appwriteCollectionId,
                 conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
                 slug
+            
             )
         } catch (error) {
-            console.log("Appwrite serive :: updatePost :: error", error);        }
+            console.log("Appwrite serive :: getPost :: error", error);
+            return false
+        }
     }
 
     async getPosts(queries = [Query.equal("status", "active")]){
         try {
             return await this.databases.listDocuments(
-                conf.appwriteCollectionId,
                 conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
                 queries,
                 
+
             )
         } catch (error) {
-            console.log("Appwrite serive :: updatePost :: error", error);
-            return false;
+            console.log("Appwrite serive :: getPosts :: error", error);
+            return false
         }
     }
 
-    // File upload Service
+    // file upload service
 
     async uploadFile(file){
         try {
@@ -99,11 +104,10 @@ export class Service{
                 conf.appwriteBucketId,
                 ID.unique(),
                 file
-
             )
         } catch (error) {
-            console.log("Appwrite serive :: updatePost :: error", error);
-            return false;
+            console.log("Appwrite serive :: uploadFile :: error", error);
+            return false
         }
     }
 
@@ -115,18 +119,19 @@ export class Service{
             )
             return true
         } catch (error) {
-            console.log("Appwrite serive :: updatePost :: error", error);
+            console.log("Appwrite serive :: deleteFile :: error", error);
             return false
         }
     }
 
     getFilePreview(fileId){
         return this.bucket.getFilePreview(
-            conf.appwriteBucketIdl,
+            conf.appwriteBucketId,
             fileId
-        )       
-}
+        )
+    }
 }
 
-const service = new service()
+
+const service = new Service()
 export default service
